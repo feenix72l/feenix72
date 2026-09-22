@@ -14,6 +14,7 @@ let unit = localStorage.getItem('skycast-unit') || 'celsius';
 let weatherData;
 let requestController;
 let deferredPrompt = null;
+let theme = localStorage.getItem('skycast-theme') || 'light';
 
 const $ = (id) => document.getElementById(id);
 const weatherCodes = { 0:['Clear sky','☼'],1:['Mainly clear','◒'],2:['Partly cloudy','◑'],3:['Overcast','☁'],45:['Foggy','≋'],48:['Rime fog','≋'],51:['Light drizzle','⌁'],53:['Drizzle','⌁'],55:['Heavy drizzle','⌁'],61:['Light rain','☂'],63:['Rain','☂'],65:['Heavy rain','☂'],71:['Light snow','❄'],73:['Snow','❄'],75:['Heavy snow','❄'],80:['Rain showers','☂'],81:['Rain showers','☂'],82:['Heavy showers','☂'],95:['Thunderstorm','ϟ'],96:['Thunderstorm','ϟ'],99:['Thunderstorm','ϟ'] };
@@ -21,6 +22,48 @@ const codeInfo = (code) => weatherCodes[code] || ['Variable conditions','◌'];
 const temp = (value) => Number.isFinite(value) ? Math.round(value) : '--';
 const time = (value) => new Date(value).toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
 const day = (value, index) => index === 0 ? 'Today' : new Date(`${value}T12:00:00`).toLocaleDateString([], { weekday:'short' });
+
+function setTheme(nextTheme) {
+  theme = nextTheme;
+  document.body.dataset.theme = theme;
+  localStorage.setItem('skycast-theme', theme);
+  const themeButton = $('themeToggle');
+  if (themeButton) {
+    themeButton.textContent = theme === 'dark' ? '☀' : '☾';
+    themeButton.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+}
+
+function saveRecentCity(cityName) {
+  const entries = JSON.parse(localStorage.getItem('skycast-recent') || '[]');
+  const next = [cityName, ...entries.filter((entry) => entry !== cityName)].slice(0, 5);
+  localStorage.setItem('skycast-recent', JSON.stringify(next));
+  renderRecentCities();
+}
+
+function renderRecentCities() {
+  const container = $('recentCities');
+  if (!container) return;
+
+  const recent = JSON.parse(localStorage.getItem('skycast-recent') || '[]');
+  if (!recent.length) {
+    container.innerHTML = '<span class="recent-empty">No recent cities yet</span>';
+    return;
+  }
+
+  container.innerHTML = recent.map((city) => `<button type="button" class="recent-city" data-city="${city}">${city}</button>`).join('');
+  container.querySelectorAll('.recent-city').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const cityName = button.dataset.city;
+      if (!cityName) return;
+      try {
+        await searchCity(cityName);
+      } catch (error) {
+        setMessage(error.message || `Could not load ${cityName}.`, 'error');
+      }
+    });
+  });
+}
 
 function setMessage(message, type = '') {
   const element = $('formMessage');
@@ -36,6 +79,7 @@ function setLoading(isLoading) {
   $('locateButton')?.toggleAttribute('disabled', isLoading);
   $('refreshButton')?.toggleAttribute('disabled', isLoading);
   $('installButton')?.toggleAttribute('disabled', isLoading);
+  $('themeToggle')?.toggleAttribute('disabled', isLoading);
   $('weatherGrid')?.setAttribute('aria-busy', String(isLoading));
 }
 
@@ -46,6 +90,7 @@ async function searchCity(query) {
   if (!data.results?.length) throw new Error('Could not find that city. Try another search.');
   const result = data.results[0];
   location = { name: result.name, country: result.country || result.country_code || 'Unknown location', latitude: result.latitude, longitude: result.longitude };
+  saveRecentCity(location.name);
   await loadWeather();
 }
 
@@ -103,6 +148,7 @@ function bindQuickLocations() {
     const city = QUICK_LOCATIONS.find((entry) => entry.name === button.dataset.location);
     if (!city) return;
     location = { ...city };
+    saveRecentCity(location.name);
     await loadWeather();
   }));
 }
@@ -166,16 +212,24 @@ $('unitToggle').addEventListener('click', () => {
 
 $('refreshButton').addEventListener('click', () => loadWeather());
 
+$('themeToggle').addEventListener('click', () => {
+  const nextTheme = theme === 'dark' ? 'light' : 'dark';
+  setTheme(nextTheme);
+});
+
 $('locateButton').addEventListener('click', () => {
   if (!navigator.geolocation) { setMessage('Location is not available in this browser.', 'error'); return; }
   setMessage('Finding your location...');
   navigator.geolocation.getCurrentPosition(async ({ coords }) => {
     location = { name:'Your location', country:'Local forecast', latitude:coords.latitude, longitude:coords.longitude };
+    saveRecentCity(location.name);
     await loadWeather();
   }, () => setMessage('Please allow location access, or search for a city instead.', 'error'), { enableHighAccuracy:false, timeout:10000, maximumAge:300000 });
 });
 
 $('unitToggle').innerHTML = unit === 'celsius' ? '°C <span>/</span> °F' : '°F <span>/</span> °C';
+setTheme(theme);
+renderRecentCities();
 registerServiceWorker();
 setupInstallPrompt();
 bindQuickLocations();

@@ -13,11 +13,12 @@
   <link rel="stylesheet" href="styles.css" />
   <script src="app.js" defer></script>
 </head>
-<body>
+<body data-theme="light">
   <div class="app-shell">
     <header class="topbar">
       <a class="brand" href="./" aria-label="Skycast home"><span class="brand-mark">✦</span> skycast</a>
       <div class="topbar-actions">
+        <button class="icon-button" id="themeToggle" type="button" title="Toggle theme" aria-label="Toggle theme">☾</button>
         <button class="unit-toggle" id="unitToggle" type="button" aria-label="Switch temperature units">°C <span>/</span> °F</button>
         <button class="icon-button" id="locateButton" type="button" title="Use my location" aria-label="Use my location">⌖</button>
         <button class="icon-button install-button" id="installButton" type="button" title="Install Skycast" aria-label="Install Skycast" hidden>⇩</button>
@@ -34,6 +35,10 @@
           <input id="searchInput" type="search" placeholder="Search a city..." autocomplete="off" required />
           <button type="submit">Search</button>
         </form>
+        <div class="recent-cities-wrap">
+          <p class="muted-label recent-label">RECENTLY VIEWED</p>
+          <div id="recentCities" class="recent-cities" aria-live="polite"></div>
+        </div>
         <div class="quick-locations" aria-label="Popular cities">
           <button type="button" data-location="London">London</button>
           <button type="button" data-location="New York">New York</button>
