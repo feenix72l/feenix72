@@ -13,6 +13,7 @@ let location = { ...QUICK_LOCATIONS[0] };
 let unit = localStorage.getItem('skycast-unit') || 'celsius';
 let weatherData;
 let requestController;
+let deferredPrompt = null;
 
 const $ = (id) => document.getElementById(id);
 const weatherCodes = { 0:['Clear sky','☼'],1:['Mainly clear','◒'],2:['Partly cloudy','◑'],3:['Overcast','☁'],45:['Foggy','≋'],48:['Rime fog','≋'],51:['Light drizzle','⌁'],53:['Drizzle','⌁'],55:['Heavy drizzle','⌁'],61:['Light rain','☂'],63:['Rain','☂'],65:['Heavy rain','☂'],71:['Light snow','❄'],73:['Snow','❄'],75:['Heavy snow','❄'],80:['Rain showers','☂'],81:['Rain showers','☂'],82:['Heavy showers','☂'],95:['Thunderstorm','ϟ'],96:['Thunderstorm','ϟ'],99:['Thunderstorm','ϟ'] };
@@ -21,13 +22,20 @@ const temp = (value) => Number.isFinite(value) ? Math.round(value) : '--';
 const time = (value) => new Date(value).toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
 const day = (value, index) => index === 0 ? 'Today' : new Date(`${value}T12:00:00`).toLocaleDateString([], { weekday:'short' });
 
-function setMessage(message, type = '') { const element = $('formMessage'); if (!element) return; element.textContent = message; element.dataset.type = type; }
+function setMessage(message, type = '') {
+  const element = $('formMessage');
+  if (!element) return;
+  element.textContent = message;
+  element.dataset.type = type;
+}
+
 function setLoading(isLoading) {
   $('searchForm')?.classList.toggle('is-loading', isLoading);
   $('searchForm')?.querySelector('button')?.toggleAttribute('disabled', isLoading);
   $('unitToggle')?.toggleAttribute('disabled', isLoading);
   $('locateButton')?.toggleAttribute('disabled', isLoading);
   $('refreshButton')?.toggleAttribute('disabled', isLoading);
+  $('installButton')?.toggleAttribute('disabled', isLoading);
   $('weatherGrid')?.setAttribute('aria-busy', String(isLoading));
 }
 
@@ -99,6 +107,47 @@ function bindQuickLocations() {
   }));
 }
 
+function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch((error) => {
+      console.warn('Service worker registration failed:', error);
+    });
+  });
+}
+
+function setupInstallPrompt() {
+  const installButton = $('installButton');
+  if (!installButton) return;
+
+  installButton.addEventListener('click', async () => {
+    if (!deferredPrompt) {
+      setMessage('Install is available in supported browsers.', 'error');
+      return;
+    }
+
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installButton.hidden = true;
+  });
+
+  window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    deferredPrompt = event;
+    installButton.hidden = false;
+  });
+
+  window.addEventListener('appinstalled', () => {
+    installButton.hidden = true;
+    setMessage('Skycast was installed successfully.');
+  });
+
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    installButton.hidden = true;
+  }
+}
+
 $('searchForm').addEventListener('submit', async (event) => {
   event.preventDefault();
   const input = $('searchInput');
@@ -127,5 +176,7 @@ $('locateButton').addEventListener('click', () => {
 });
 
 $('unitToggle').innerHTML = unit === 'celsius' ? '°C <span>/</span> °F' : '°F <span>/</span> °C';
+registerServiceWorker();
+setupInstallPrompt();
 bindQuickLocations();
 loadWeather();

@@ -74,7 +74,8 @@ button {
 
 .unit-toggle,
 .icon-button,
-.quick-locations button {
+.quick-locations button,
+.section-actions .unit-toggle {
   border: 1px solid var(--line);
   background: var(--white);
   border-radius: 12px;
@@ -96,6 +97,12 @@ button {
   color: var(--green);
 }
 
+.section-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .unit-toggle span {
   color: #bec9c8;
   margin: 0 5px;
@@ -106,6 +113,16 @@ button {
   height: 42px;
   font-size: 20px;
   padding: 0;
+}
+
+.install-button {
+  background: #eaf8f3;
+  color: var(--green);
+  border-color: #cfeee2;
+}
+
+.install-button[hidden] {
+  display: none;
 }
 
 .hero {
