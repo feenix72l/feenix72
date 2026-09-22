@@ -20,7 +20,6 @@
         <button class="icon-button" id="locateButton" type="button" title="Use my location" aria-label="Use my location">⌖</button>
       </div>
     </header>
-
     <main>
       <section class="hero">
         <div class="eyebrow"><span class="status-dot"></span> LIVE WEATHER</div>
@@ -40,84 +39,17 @@
         </div>
         <p class="form-message" id="formMessage" role="status"></p>
       </section>
-
       <section class="weather-grid" id="weatherGrid" aria-live="polite" aria-busy="true">
         <article class="current-card card">
-          <div class="card-heading">
-            <div>
-              <p class="muted-label">CURRENTLY</p>
-              <h2 id="locationName">Loading...</h2>
-              <p id="locationMeta" class="muted">Getting your forecast</p>
-            </div>
-            <span class="weather-icon" id="currentIcon" role="img" aria-label="Current weather">☼</span>
-          </div>
-
-          <div class="temperature-row">
-            <span class="temperature" id="currentTemp">--</span>
-            <span class="degree" id="degree">°C</span>
-            <div class="feels">
-              Feels like <strong id="feelsLike">--°</strong><br />
-              <span id="currentSummary">—</span>
-            </div>
-          </div>
-
-          <div class="stats">
-            <div><span>Humidity</span><strong id="humidity">--%</strong></div>
-            <div><span>Wind</span><strong id="wind">-- km/h</strong></div>
-            <div><span>Precipitation</span><strong id="precipitation">-- mm</strong></div>
-          </div>
+          <div class="card-heading"><div><p class="muted-label">CURRENTLY</p><h2 id="locationName">Loading...</h2><p id="locationMeta" class="muted">Getting your forecast</p></div><span class="weather-icon" id="currentIcon" role="img" aria-label="Current weather">☼</span></div>
+          <div class="temperature-row"><span class="temperature" id="currentTemp">--</span><span class="degree" id="degree">°C</span><div class="feels">Feels like <strong id="feelsLike">--°</strong><br /><span id="currentSummary">—</span></div></div>
+          <div class="stats"><div><span>Humidity</span><strong id="humidity">--%</strong></div><div><span>Wind</span><strong id="wind">-- km/h</strong></div><div><span>Precipitation</span><strong id="precipitation">-- mm</strong></div></div>
         </article>
-
-        <article class="sun-card card">
-          <p class="muted-label">TODAY'S LIGHT</p>
-          <div class="sun-times">
-            <div>
-              <span class="sun-symbol rise">↑</span>
-              <span>Sunrise</span>
-              <strong id="sunrise">--:--</strong>
-            </div>
-            <div>
-              <span class="sun-symbol set">↓</span>
-              <span>Sunset</span>
-              <strong id="sunset">--:--</strong>
-            </div>
-          </div>
-          <div class="daylight-track"><span id="daylightProgress"></span></div>
-          <p class="muted" id="daylightText">Calculating daylight...</p>
-        </article>
+        <article class="sun-card card"><p class="muted-label">TODAY'S LIGHT</p><div class="sun-times"><div><span class="sun-symbol rise">↑</span><span>Sunrise</span><strong id="sunrise">--:--</strong></div><div><span class="sun-symbol set">↓</span><span>Sunset</span><strong id="sunset">--:--</strong></div></div><div class="daylight-track"><span id="daylightProgress"></span></div><p class="muted" id="daylightText">Calculating daylight...</p></article>
       </section>
-
-      <section class="forecast-section">
-        <div class="section-heading">
-          <div>
-            <p class="muted-label">THE WEEK AHEAD</p>
-            <h2>Daily forecast</h2>
-          </div>
-          <span class="updated" id="updatedAt">—</span>
-        </div>
-        <div class="forecast-list" id="forecastList"></div>
-      </section>
-
-      <section class="details-grid">
-        <article class="detail-card card">
-          <div class="section-heading">
-            <div>
-              <p class="muted-label">NEXT 24 HOURS</p>
-              <h2>Hourly outlook</h2>
-            </div>
-          </div>
-          <div class="hourly-list" id="hourlyList"></div>
-        </article>
-
-        <aside class="tip-card">
-          <span class="tip-icon">✧</span>
-          <p class="muted-label">SKYCAST TIP</p>
-          <h2 id="weatherTip">Pack your day around the weather.</h2>
-          <p class="muted">Forecast data from Open-Meteo. No account or API key required.</p>
-        </aside>
-      </section>
+      <section class="forecast-section"><div class="section-heading"><div><p class="muted-label">THE WEEK AHEAD</p><h2>Daily forecast</h2></div><div class="section-actions"><span class="updated" id="updatedAt">—</span><button class="unit-toggle" id="refreshButton" type="button" aria-label="Refresh forecast">↻ Refresh</button></div></div><div class="forecast-list" id="forecastList"></div></section>
+      <section class="details-grid"><article class="detail-card card"><div class="section-heading"><div><p class="muted-label">NEXT 24 HOURS</p><h2>Hourly outlook</h2></div></div><div class="hourly-list" id="hourlyList"></div></article><aside class="tip-card"><span class="tip-icon">✧</span><p class="muted-label">SKYCAST TIP</p><h2 id="weatherTip">Pack your day around the weather.</h2><p class="muted">Forecast data from Open-Meteo. No account or API key required.</p></aside></section>
     </main>
-
     <footer>Made for clearer days <span>·</span> <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Data by Open-Meteo</a></footer>
   </div>
 </body>
