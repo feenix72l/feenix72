@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="styles.css" />
   <script src="app.js" defer></script>
 </head>
-<body data-theme="light">
+<body data-theme="light" data-weather="calm">
   <div class="app-shell">
     <header class="topbar">
       <a class="brand" href="./" aria-label="Skycast home"><span class="brand-mark">✦</span> skycast</a>
@@ -27,7 +27,10 @@
     <main>
       <section class="hero">
         <div class="eyebrow"><span class="status-dot"></span> LIVE WEATHER</div>
-        <h1>Know your sky.</h1>
+        <div class="hero-row">
+          <h1>Know your sky.</h1>
+          <span class="condition-tag" id="weatherBadge">Clear sky</span>
+        </div>
         <p class="hero-copy">A calmer way to check the weather, wherever you are.</p>
         <form class="search" id="searchForm">
           <label class="sr-only" for="searchInput">Search for a city</label>

@@ -23,6 +23,24 @@ const temp = (value) => Number.isFinite(value) ? Math.round(value) : '--';
 const time = (value) => new Date(value).toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
 const day = (value, index) => index === 0 ? 'Today' : new Date(`${value}T12:00:00`).toLocaleDateString([], { weekday:'short' });
 
+function applyWeatherTone(code) {
+  const tone = (() => {
+    if ([0, 1, 2].includes(code)) return 'sunny';
+    if ([3, 45, 48].includes(code)) return 'cloudy';
+    if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) return 'rain';
+    if ([71, 73, 75].includes(code)) return 'snow';
+    if ([95, 96, 99].includes(code)) return 'storm';
+    return 'calm';
+  })();
+
+  document.body.dataset.weather = tone;
+  const badge = $('weatherBadge');
+  if (badge) {
+    const label = codeInfo(code)[0];
+    badge.textContent = label;
+  }
+}
+
 function setTheme(nextTheme) {
   theme = nextTheme;
   document.body.dataset.theme = theme;
@@ -117,6 +135,7 @@ function render() {
   const { current, daily, hourly } = weatherData;
   const [summary, icon] = codeInfo(current.weather_code);
   const temperatureUnit = unit === 'celsius' ? '°C' : '°F';
+  applyWeatherTone(current.weather_code);
   $('locationName').textContent = location.name;
   $('locationMeta').textContent = `${location.country} · Updated ${time(new Date())}`;
   $('currentIcon').textContent = icon;

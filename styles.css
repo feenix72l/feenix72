@@ -8,6 +8,9 @@
   --green: #2c8b72;
   --yellow: #f7c960;
   --shadow: 0 14px 40px rgba(27, 58, 53, 0.07);
+  --hero-glow: rgba(122, 209, 168, 0.28);
+  --card-bg: #ffffff;
+  --hero-bg: linear-gradient(135deg, rgba(217, 242, 233, 0.8), rgba(255, 255, 255, 0.94));
 }
 
 body[data-theme='dark'] {
@@ -20,6 +23,34 @@ body[data-theme='dark'] {
   --green: #7bd7b2;
   --yellow: #f5b942;
   --shadow: 0 22px 44px rgba(0, 0, 0, 0.28);
+  --hero-glow: rgba(99, 136, 128, 0.24);
+  --card-bg: #15272d;
+  --hero-bg: linear-gradient(135deg, rgba(17, 39, 37, 0.96), rgba(18, 31, 34, 0.98));
+}
+
+body[data-weather='sunny'] {
+  --hero-glow: rgba(247, 201, 96, 0.26);
+  --hero-bg: linear-gradient(135deg, rgba(255, 237, 184, 0.84), rgba(255, 255, 255, 0.96));
+}
+
+body[data-weather='cloudy'] {
+  --hero-glow: rgba(117, 142, 156, 0.24);
+  --hero-bg: linear-gradient(135deg, rgba(216, 223, 232, 0.9), rgba(255, 255, 255, 0.95));
+}
+
+body[data-weather='rain'] {
+  --hero-glow: rgba(103, 160, 195, 0.23);
+  --hero-bg: linear-gradient(135deg, rgba(194, 221, 235, 0.9), rgba(255, 255, 255, 0.96));
+}
+
+body[data-weather='storm'] {
+  --hero-glow: rgba(111, 136, 185, 0.28);
+  --hero-bg: linear-gradient(135deg, rgba(123, 130, 170, 0.82), rgba(20, 32, 40, 0.94));
+}
+
+body[data-weather='snow'] {
+  --hero-glow: rgba(160, 197, 214, 0.22);
+  --hero-bg: linear-gradient(135deg, rgba(223, 236, 246, 0.9), rgba(255, 255, 255, 0.96));
 }
 
 * {
@@ -36,6 +67,16 @@ body {
   background: var(--paper);
   color: var(--ink);
   transition: background 0.2s ease, color 0.2s ease;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: var(--hero-bg);
+  opacity: 0.95;
+  z-index: -1;
 }
 
 button,
@@ -164,14 +205,37 @@ button {
   height: 7px;
   border-radius: 50%;
   background: #51b68d;
-  box-shadow: 0 0 0 4px #e2f5ed;
+  box-shadow: 0 0 0 4px var(--hero-glow);
+}
+
+.hero-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin: 22px 0 17px;
 }
 
 .hero h1 {
-  margin: 22px 0 17px;
+  margin: 0;
   font: 700 clamp(46px, 7vw, 76px) 'Space Grotesk', sans-serif;
   letter-spacing: -0.075em;
   line-height: 0.98;
+}
+
+.condition-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.64);
+  border: 1px solid var(--line);
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .hero-copy {
@@ -288,7 +352,7 @@ button {
 }
 
 .card {
-  background: var(--white);
+  background: var(--card-bg);
   border: 1px solid var(--line);
   border-radius: 20px;
   box-shadow: var(--shadow);
